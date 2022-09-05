@@ -1,9 +1,10 @@
-import express from "express";
-import mongoose from "mongoose";
-import cors from 'cors';
-import morgan from 'morgan';
-import 'dotenv/config';
-import cookieParser from "cookie-parser";
+import express from "express"
+import mongoose from "mongoose"
+import cors from 'cors'
+import morgan from 'morgan'
+import 'dotenv/config'
+import cookieParser from "cookie-parser"
+import allRoutes from './routes/index.js'
 
 const PORT = process.emitWarning.PORT || 8000
 const app = express()

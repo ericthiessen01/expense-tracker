@@ -2,6 +2,7 @@ import React from 'react'
 import axios from 'axios'
 import { useState, useEffect } from 'react'
 import {useNavigate} from 'react-router-dom'
+import { FaBars } from 'react-icons/fa'
 import useAuth from '../hooks/useAuth'
 
 function Navbar() {
@@ -35,12 +36,12 @@ function Navbar() {
     }
 
   return (
-    <div>
+    <div className='flex justify-between items-center p-3 bg-stone-100'>
         <h1>Expense Tracker</h1>
         {user && 
         <div>
-            <h2>Welcome back {user.name}!</h2>
-            <button type='button' onClick={logout} >Logout</button>
+            {/* <h2>Welcome back {user.name}!</h2> */}
+            <button className='bg-green-400 px-4 py-2' type='button' onClick={logout} >Logout</button>
         </div>
         }
     </div>

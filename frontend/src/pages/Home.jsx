@@ -1,8 +1,11 @@
 import React from 'react'
+import Expense from '../components/Expense'
 
 function Home() {
   return (
-    <div>Home</div>
+    <div className='m-4'>
+      <Expense />
+    </div>
   )
 }
 

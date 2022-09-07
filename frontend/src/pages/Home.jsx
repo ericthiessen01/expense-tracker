@@ -3,7 +3,7 @@ import Expense from '../components/Expense'
 
 function Home() {
   return (
-    <div className='m-4'>
+    <div className=''>
       <Expense />
     </div>
   )

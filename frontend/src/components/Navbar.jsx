@@ -36,12 +36,12 @@ function Navbar() {
     }
 
   return (
-    <div className='flex justify-between items-center p-3 bg-stone-100'>
+    <div className='flex justify-between items-center p-3 bg-stone-100 shadow'>
         <h1>Expense Tracker</h1>
         {user && 
         <div>
             {/* <h2>Welcome back {user.name}!</h2> */}
-            <button className='bg-green-400 px-4 py-2' type='button' onClick={logout} >Logout</button>
+            <button className='bg-green-400 shadow-xl px-4 py-2 rounded-md' type='button' onClick={logout} >Logout</button>
         </div>
         }
     </div>

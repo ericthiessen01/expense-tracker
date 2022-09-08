@@ -8,7 +8,7 @@ import Navbar from './components/Navbar'
 function App() {
 
   return (
-    <>
+    <div className='h-screen bg-stone-50'>
     <Navbar />
       <Routes>
         <Route path='/login' element={<Login />} />
@@ -16,7 +16,7 @@ function App() {
           <Route path='/' element={<Home />} />
         </Route>
       </Routes>
-    </>
+    </div>
   )
 }
 

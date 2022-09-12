@@ -5,11 +5,16 @@ import {FaTrashAlt} from 'react-icons/fa'
 
 function Expense() {
     const [expenseList, setExpenseList] = useState([])
+    const [totalAmount, setTotalAmount] = useState(0)
 
     const getExpenses = async() => {
         try{
             const {data} = await axios.get('/api/expense/myExpenses')
+            const sum = data.reduce((acc, obj) => {
+                return acc + obj.cost
+            }, 0)
             setExpenseList(data.sort((a, b) => a.date.localeCompare(b.date)))
+            setTotalAmount(sum)
         }catch(err){
             console.log(err)
         }
@@ -62,13 +67,20 @@ function Expense() {
     ))
 
   return (
-    <div className='w-full max-w-5xl lg:mx-auto'>
+    <div className='w-full max-w-5xl bg-neutral-100 lg:p-4 lg:mx-auto'>
         <div className='grid grid-cols-12 items-center p-2 font-bold text-lg border-b-2 border-green-500'>
             <p className='col-span-5' >Description</p>
             <p className='col-span-3' >Date</p>
             <p className='col-span-2 text-right overflow-visible' >Amount</p>
         </div>
         {expenseHtml}
+        <div className='grid grid-cols-12 items-center p-2 font-bold text-lg'>
+            <p className='col-span-8'>Total</p>
+            <p className='col-span-2 text-right'>{totalAmount.toLocaleString("en-US", {
+                style: "currency", 
+                currency: "USD", 
+            })}</p>
+        </div>
         <form onSubmit={addExpense} className='w-full'>
             <div className='flex justify-between my-4 p-2'>
                 <input className='w-2/6 text-sm border-2 border-slate-800 rounded-md py-1 px-1.5 ' type='text' name='description' placeholder='Description' required />

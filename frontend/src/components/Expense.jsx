@@ -68,13 +68,13 @@ function Expense() {
 
   return (
     <div className='w-full max-w-5xl bg-neutral-100 lg:p-4 lg:mx-auto'>
-        <div className='grid grid-cols-12 items-center p-2 font-bold text-lg border-b-2 border-green-500'>
+        <div className='grid grid-cols-12 items-center p-2 font-bold md:text-lg border-b-2 border-green-500'>
             <p className='col-span-5' >Description</p>
             <p className='col-span-3' >Date</p>
             <p className='col-span-2 text-right overflow-visible' >Amount</p>
         </div>
         {expenseHtml}
-        <div className='grid grid-cols-12 items-center p-2 font-bold text-lg'>
+        <div className='grid grid-cols-12 items-center p-2 font-bold md:text-lg'>
             <p className='col-span-8'>Total</p>
             <p className='col-span-2 text-right'>{totalAmount.toLocaleString("en-US", {
                 style: "currency", 
@@ -82,10 +82,10 @@ function Expense() {
             })}</p>
         </div>
         <form onSubmit={addExpense} className='w-full'>
-            <div className='flex justify-between my-4 p-2'>
-                <input className='w-2/6 text-sm border-2 border-slate-800 rounded-md py-1 px-1.5 ' type='text' name='description' placeholder='Description' required />
-                <input className='w-2/6 text-sm border-2 border-slate-800 rounded-md py-1 px-1.5' type='date' name='date' required />
-                <input className='w-1/6 text-sm border-2 border-slate-800 rounded-md py-1 px-1.5' type='number' name='cost' placeholder='Cost' pattern='^\d*(\.\d{1,2})?$' step='.01' required />
+            <div className='grid grid-cols-12 gap-2 my-4 p-2 text-sm md:text-base'>
+                <input className='col-span-5 border-2 border-slate-800 rounded-md py-1 px-1.5 ' type='text' name='description' placeholder='Description' required />
+                <input className='col-span-3 md:col-span-4 border-2 border-slate-800 rounded-md py-1 px-1.5' type='date' name='date' required />
+                <input className='col-span-3 border-2 border-slate-800 rounded-md py-1 px-1.5' type='number' name='cost' placeholder='Amount' pattern='^\d*(\.\d{1,2})?$' step='.01' required />
             </div>
             <button className='block w-5/6 bg-green-500 py-2 my-2 mx-auto text-center rounded-md shadow-sm font-bold max-w-lg' type='submit'>Add Expense</button>
         </form>

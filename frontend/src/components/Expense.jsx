@@ -1,9 +1,10 @@
 import React from 'react'
 import axios from 'axios'
 import { useState, useEffect } from 'react'
-import {FaTrashAlt} from 'react-icons/fa'
+import {FaTrashAlt, FaSort} from 'react-icons/fa'
 
 function Expense() {
+    const [sortType, setSortType] = useState('')
     const [expenseList, setExpenseList] = useState([])
     const [totalAmount, setTotalAmount] = useState(0)
 
@@ -13,7 +14,20 @@ function Expense() {
             const sum = data.reduce((acc, obj) => {
                 return acc + obj.cost
             }, 0)
-            setExpenseList(data.sort((a, b) => a.date.localeCompare(b.date)))
+            function sortedData() {
+                if(sortType === 'oldToNew'){
+                    return data.sort((a, b) => a.date.localeCompare(b.date))
+                }if(sortType === 'newToOld'){
+                    return data.sort((a, b) => b.date.localeCompare(a.date))
+                }if(sortType === 'lowToHigh'){
+                    return data.sort((a, b) => a.cost - b.cost)
+                }if(sortType === 'highToLow'){
+                    return data.sort((a, b) => b.cost - a.cost)
+                }else{
+                    return data
+                }
+            }
+            setExpenseList(sortedData())
             setTotalAmount(sum)
         }catch(err){
             console.log(err)
@@ -22,7 +36,7 @@ function Expense() {
 
     useEffect(() => {
         getExpenses()
-    }, [])
+    }, [sortType])
     
     const addExpense = async (e) => {
         e.preventDefault()
@@ -48,6 +62,18 @@ function Expense() {
             console.log(err)
         }
     }
+
+    const dateSort = () => {
+        setSortType(prev => {
+            return prev === 'oldToNew' ? 'newToOld' : 'oldToNew' 
+        })
+    }
+
+    const amountSort = () => {
+        setSortType(prev => {
+            return prev === 'highToLow' ? 'lowToHigh' : 'highToLow' 
+        })
+    }
     
     const expenseHtml = expenseList.map(item => (
         <div key={item._id} className='grid grid-cols-12 items-center py-4 px-2 text-sm md:text-base shadow max-w-5xl lg:mx-auto'>
@@ -70,8 +96,8 @@ function Expense() {
     <div className='w-full max-w-5xl bg-neutral-100 lg:p-4 lg:mx-auto'>
         <div className='grid grid-cols-12 items-center p-2 font-bold md:text-lg border-b-2 border-green-500'>
             <p className='col-span-5' >Description</p>
-            <p className='col-span-3' >Date</p>
-            <p className='col-span-2 text-right overflow-visible' >Amount</p>
+            <p className='col-span-3 cursor-pointer' onClick={() => dateSort()} >Date<FaSort className='inline'/></p>
+            <p className='col-span-3 md:col-span-2 text-right overflow-visible cursor-pointer' onClick={() => amountSort()} >Amount<FaSort className='inline'/></p>
         </div>
         {expenseHtml}
         <div className='grid grid-cols-12 items-center p-2 font-bold md:text-lg'>

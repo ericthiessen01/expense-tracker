@@ -4,6 +4,7 @@ const { Schema } = mongoose
 
 const expenseSchema = new Schema({
     description: String,
+    category: String,
     date: Date,
     cost: Number,
     user: {

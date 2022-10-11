@@ -5,6 +5,7 @@ export const createExpense = async (req, res, next) => {
     try{
         const newExpense = new Expense({
             description: req.body.description,
+            category: req.body.category,
             date: req.body.date,
             cost: req.body.cost,
             user: req.user.id
@@ -29,6 +30,7 @@ export const updateExpense = async (req, res, next) => {
         }))
         const updatedExpense = await Expense.findByIdAndUpdate(req.params.expenseId, {
             description: req.body.description,
+            category: req.body.category,
             date: req.body.date,
             cost: req.body.cost
         }, {new: true})

@@ -36,7 +36,7 @@ function Navbar() {
     }
 
   return (
-    <div className='flex justify-between items-center p-4 bg-stone-100 border-b-2 font-bold'>
+    <div className='flex justify-between items-center px-4 h-[8vh] bg-stone-100 border-b-2 font-bold'>
         <h1 className='text-green-600 text-2xl'>Expense Tracker</h1>
         {user && 
         <div>

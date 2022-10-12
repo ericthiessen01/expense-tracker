@@ -41,7 +41,7 @@ function Navbar() {
         {user && 
         <div>
             {/* <h2>Welcome back {user.name}!</h2> */}
-            <button className='bg-green-500 shadow-xl px-4 py-2 rounded-md' type='button' onClick={logout} >Logout</button>
+            <button className='block bg-green-500 py-2 px-5 mx-auto md:text-xl rounded-md shadow-sm font-medium max-w-lg hover:shadow-md hover:bg-lime-500 transition-all' type='button' onClick={logout} >Logout</button>
         </div>
         }
     </div>

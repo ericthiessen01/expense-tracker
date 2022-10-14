@@ -23,6 +23,7 @@ function Expense() {
         "minAmount": undefined,
         "maxAmount": undefined
     })
+    
 
     const getExpenses = async() => {
         try{
@@ -121,7 +122,7 @@ function Expense() {
 
     const applyFilterOptions = (e) => {
         e.preventDefault()
-        console.log(e.target)
+        console.log(e.target.categories.value)
     }
 
     const filterExpenses = () => {
@@ -188,6 +189,8 @@ function Expense() {
             expenseList={expenseList}
             filterExpenses={filterExpenses}
             applyFilterOptions={applyFilterOptions}
+            filterOptions={filterOptions}
+            setFilterOptions={setFilterOptions}
         />}
     </>
   )

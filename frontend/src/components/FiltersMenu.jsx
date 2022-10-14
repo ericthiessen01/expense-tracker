@@ -1,15 +1,28 @@
 import React from 'react'
 
 function FiltersMenu(props) {
+    // useRef to hold checkbox values then pass to setState
+    const [categoriesArr, setCategoriesArr] = useState([])
 
     const categories = [...new Set(props.expenseList.map(item => item.category))].sort().map(item => (
         {value: item, label: item.charAt(0).toUpperCase() + item.slice(1)}
     ))
 
-    const categoryInputs = categories.map((item, i) => (
+    const handleChange = (category) => {
+        setCategoriesArr(prev => {
+            const i = prev.indexOf(category)
+            if(i === -1){
+                return [...prev, category]
+            } else {
+                return prev.filter(v => v != category)
+            }
+        })
+    }
+    
+    const categoryInputs = categories.map(item => (
         <div key={item.value}>
             <label>
-                <input type='checkbox' name='category[]' value={item.value} />
+                <input onChange={() => handleChange(item.value)} type='checkbox' name='category' value={item.value} />
             {item.label}</label>
         </div>
     ))
@@ -19,6 +32,7 @@ function FiltersMenu(props) {
         <button onClick={() => props.toggleFilters()}>close</button>
         <form onSubmit={props.applyFilterOptions} className='overflow-visible'>
             {categoryInputs}
+            <input type='hidden' name='categories' value={categoriesArr} />
             <input className='' type='date' name='dateStart' />
             <input className='' type='date' name='dateEnd' />
             <input className='' type='number' name='minAmount' placeholder='Min Amount' pattern='^\d*(\.\d{1,2})?$' step='.01' />

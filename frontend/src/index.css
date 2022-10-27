@@ -12,3 +12,14 @@ body {
     font-family: 'Roboto', sans-serif;
     font-weight: 500;
 }
+
+@layer utilities {
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+      @apply appearance-none;
+    }
+  }
+
+  .rdrDayNumber {
+    overflow-y: hidden!important;
+  }

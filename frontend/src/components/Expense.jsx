@@ -18,12 +18,12 @@ function Expense() {
     const [showFilters, setShowFilters] = useState(false)
     const [filterOptions, setFilterOptions] = useState({
         "category": ['food'],
-        "dateStart": undefined,
-        "dateEnd": undefined,
-        "minAmount": undefined,
-        "maxAmount": undefined
+        "dateStart": "",
+        "dateEnd": "",
+        "minAmount": "",
+        "maxAmount": ""
     })
-    
+
 
     const getExpenses = async() => {
         try{

@@ -2,7 +2,7 @@ import React from 'react'
 import axios from 'axios'
 import Modal from 'react-modal'
 import NewExpense from './NewExpense'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import {FaSort, FaFilter} from 'react-icons/fa'
 import ModifyExpense from './ModifyExpense'
 import FiltersMenu from './FiltersMenu'
@@ -17,13 +17,26 @@ function Expense() {
     const [modifyItem, setModifyItem] = useState(null)
     const [showFilters, setShowFilters] = useState(false)
     const [filterOptions, setFilterOptions] = useState({
-        "category": ['food'],
-        "dateStart": "",
-        "dateEnd": "",
-        "minAmount": "",
-        "maxAmount": ""
+        "category": ['food', 'auto', 'clothing', 'hygiene'],
+        "dateStart": '2022-08-02T00:00:00.000Z',
+        "dateEnd": '2022-10-07T00:00:00.000Z',
+        "minAmount": 0,
+        "maxAmount": 99999999
     })
 
+    const filteredItems = useMemo(() => {
+        return expenseList.filter(item => {
+            return (
+                filterOptions.category.includes(item.category) &&
+                item.cost > filterOptions.minAmount &&
+                item.cost < filterOptions.maxAmount &&
+                Math.floor(new Date(item.date).getTime() / 1000) >= Math.floor(new Date(filterOptions.dateStart).getTime() / 1000) &&
+                Math.floor(new Date(item.date).getTime() / 1000) <= Math.floor(new Date(filterOptions.dateEnd).getTime() / 1000)
+                )
+        })
+    })
+
+    //modify SUM to come from filtered results
 
     const getExpenses = async() => {
         try{
@@ -133,7 +146,7 @@ function Expense() {
         })
     }
     
-    const expenseHtml = expenseList.map(item => (
+    const expenseHtml = filteredItems.map(item => (
         <div key={item._id} onClick={() => openModifyExpense(item._id)} className='grid grid-cols-12 items-center py-4 px-2 text-sm md:text-base shadow max-w-full lg:mx-auto hover:shadow-md hover:bg-neutral-200 transition-all cursor-pointer'>
             <p className='col-span-4 first-letter:uppercase' >{item.description}</p>
             <p className='col-span-3 first-letter:uppercase'>{item.category}</p>

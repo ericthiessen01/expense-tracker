@@ -2,48 +2,38 @@ import React from 'react'
 import axios from 'axios'
 import Modal from 'react-modal'
 import NewExpense from './NewExpense'
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import {FaSort, FaFilter} from 'react-icons/fa'
 import ModifyExpense from './ModifyExpense'
 import FiltersMenu from './FiltersMenu'
+import { useCallback } from 'react'
 
 Modal.setAppElement('#root')
 function Expense() {
+    const [loading, setLoading] = useState(true)
     const [sortType, setSortType] = useState('')
     const [expenseList, setExpenseList] = useState([])
-    const [totalAmount, setTotalAmount] = useState(0)
     const [modalIsOpen, setModalIsOpen] = useState(false)
     const [modifyModalIsOpen, setModifyModalIsOpen] = useState(false)
     const [modifyItem, setModifyItem] = useState(null)
     const [showFilters, setShowFilters] = useState(false)
-    const [filterOptions, setFilterOptions] = useState({
-        "category": ['food', 'auto', 'clothing', 'hygiene'],
-        "dateStart": '2022-08-02T00:00:00.000Z',
-        "dateEnd": '2022-10-07T00:00:00.000Z',
-        "minAmount": 0,
-        "maxAmount": 99999999
+    const [categoryFilter, setCategoryFilter] = useState([])
+    const [costFilter, setCostFilter] = useState({
+        minAmount: '',
+        maxAmount: '',
     })
+    const [dateFilter, setDateFilter] = useState([
+        {
+          startDate: null,
+          endDate: null,
+          key: "selection"
+        }
+      ])
 
-    const filteredItems = useMemo(() => {
-        return expenseList.filter(item => {
-            return (
-                filterOptions.category.includes(item.category) &&
-                item.cost > filterOptions.minAmount &&
-                item.cost < filterOptions.maxAmount &&
-                Math.floor(new Date(item.date).getTime() / 1000) >= Math.floor(new Date(filterOptions.dateStart).getTime() / 1000) &&
-                Math.floor(new Date(item.date).getTime() / 1000) <= Math.floor(new Date(filterOptions.dateEnd).getTime() / 1000)
-                )
-        })
-    })
-
-    //modify SUM to come from filtered results
-
-    const getExpenses = async() => {
+      const getExpenses = async() => {
         try{
+            setLoading(true)
             const {data} = await axios.get('/api/expense/myExpenses')
-            const sum = data.reduce((acc, obj) => {
-                return acc + obj.cost
-            }, 0)
             function sortedData() {
                 if(sortType === 'oldToNew'){
                     return data.sort((a, b) => a.date.localeCompare(b.date))
@@ -58,7 +48,7 @@ function Expense() {
                 }
             }
             setExpenseList(sortedData())
-            setTotalAmount(sum)
+            setLoading(false)
         }catch(err){
             console.log(err)
         }
@@ -67,6 +57,28 @@ function Expense() {
     useEffect(() => {
         getExpenses()
     }, [sortType])
+
+    const timeZoneOffset = new Date().getTimezoneOffset() * 60
+      
+    const filteredItems = useCallback(() => {
+        return expenseList.filter(item => {
+            const checkCategoryFilter = categoryFilter.length > 0 ? categoryFilter.includes(item.category) : true
+            const minFilter = costFilter.minAmount ? item.cost > costFilter.minAmount : true
+            const maxFilter = costFilter.maxAmount ? item.cost < costFilter.maxAmount : true
+            const startFilter = dateFilter[0].startDate ? Math.floor(new Date(item.date).getTime() / 1000) >= Math.floor(new Date(dateFilter[0].startDate).getTime() / 1000) - timeZoneOffset : true
+            const endFilter = dateFilter[0].endDate ? Math.floor(new Date(item.date).getTime() / 1000) <= Math.floor(new Date(dateFilter[0].endDate).getTime() / 1000) - timeZoneOffset : true
+            return (
+                checkCategoryFilter &&
+                minFilter &&
+                maxFilter &&
+                startFilter &&
+                endFilter
+                )
+        })
+    }, [showFilters, loading])
+
+    console.log(filteredItems())
+
     
     const addExpense = async (e) => {
         e.preventDefault()
@@ -133,20 +145,11 @@ function Expense() {
         setShowFilters(prev => !prev)
     }
 
-    const applyFilterOptions = (e) => {
-        e.preventDefault()
-        console.log(e.target.categories.value)
-    }
-
-    const filterExpenses = () => {
-        setExpenseList(prev => {
-            if(filterOptions.category.length > 0){
-                return prev.filter(expense => filterOptions.category.includes(expense.category))
-            }
-        })
-    }
+    const totalCost = filteredItems().reduce((acc, obj) => {
+        return acc + obj.cost
+    }, 0)
     
-    const expenseHtml = filteredItems.map(item => (
+    const expenseHtml = filteredItems().map(item => (
         <div key={item._id} onClick={() => openModifyExpense(item._id)} className='grid grid-cols-12 items-center py-4 px-2 text-sm md:text-base shadow max-w-full lg:mx-auto hover:shadow-md hover:bg-neutral-200 transition-all cursor-pointer'>
             <p className='col-span-4 first-letter:uppercase' >{item.description}</p>
             <p className='col-span-3 first-letter:uppercase'>{item.category}</p>
@@ -176,7 +179,7 @@ function Expense() {
             {expenseHtml}
             <div className='grid grid-cols-12 items-center px-3 pt-6 font-bold md:text-xl'>
                 <p className='col-span-9'>Total:</p>
-                <p className='col-span-3 text-right overflow-visible'>{totalAmount.toLocaleString("en-US", {
+                <p className='col-span-3 text-right overflow-visible'>{totalCost.toLocaleString("en-US", {
                     style: "currency", 
                     currency: "USD", 
                 })}</p>
@@ -200,10 +203,12 @@ function Expense() {
         {showFilters && <FiltersMenu 
             toggleFilters={toggleFilters}
             expenseList={expenseList}
-            filterExpenses={filterExpenses}
-            applyFilterOptions={applyFilterOptions}
-            filterOptions={filterOptions}
-            setFilterOptions={setFilterOptions}
+            costFilter={costFilter}
+            setCostFilter={setCostFilter}
+            dateFilter={dateFilter}
+            setDateFilter={setDateFilter}
+            categoryFilter={categoryFilter}
+            setCategoryFilter={setCategoryFilter}
         />}
     </>
   )

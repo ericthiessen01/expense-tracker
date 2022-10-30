@@ -20,7 +20,7 @@ function ModifyExpense(props) {
                 <input className='col-span-4 border-2 border-slate-800 rounded-md py-1 px-1.5 ' type='text' name='description' defaultValue={capFirstLetter(props.modifyItem.description)} required />
                 <CreatableSelect options={categories} className='col-span-3 border-2 border-slate-800 rounded-md overflow-visible' name='category' defaultValue={{label: capFirstLetter(props.modifyItem.category), value: props.modifyItem.category}} required />
                 <input className='col-span-3 md:col-span-3 border-2 border-slate-800 rounded-md py-1 px-1.5' type='date' name='date' defaultValue={props.modifyItem.date.substr(0, 10)} required />
-                <input className='col-span-2 border-2 border-slate-800 rounded-md py-1 px-1.5' type='number' name='cost' defaultValue={props.modifyItem.cost} pattern='^\d*(\.\d{1,2})?$' step='.01' required />
+                <input className='col-span-2 border-2 border-slate-800 rounded-md py-1 px-1.5' type='number' name='cost' defaultValue={props.modifyItem.cost.toFixed(2)} pattern='^\d*(\.\d{1,2})?$' step='.01' required />
             </div>
             <div className='flex justify-around'>
                 <button className=' bg-green-500 py-2 px-5 rounded-md shadow-sm text-lg hover:shadow-md hover:bg-lime-500 transition-all' type='submit'>Update Expense</button>

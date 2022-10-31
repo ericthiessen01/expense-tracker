@@ -24,7 +24,7 @@ function ModifyExpense(props) {
             </div>
             <div className='flex justify-around'>
                 <button className=' bg-green-500 py-2 px-5 rounded-md shadow-sm text-lg hover:shadow-md hover:bg-lime-500 transition-all' type='submit'>Update Expense</button>
-                <button className=' bg-red-600 py-2 px-5 text-slate-50 rounded-md shadow-sm text-lg hover:shadow-md hover:bg-rose-600 transition-all' onClick={() => props.deleteExpense()}>Delete Expense</button>
+                <button className=' bg-red-600 py-2 px-5 text-slate-50 rounded-md shadow-sm text-lg hover:shadow-md hover:bg-rose-600 transition-all' onClick={() => props.handleDelete()}>Delete Expense</button>
             </div>
         </form>
     </div>

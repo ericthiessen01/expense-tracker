@@ -1,21 +1,20 @@
 import React from 'react'
-import axios from 'axios'
+// import axios from 'axios'
 import Modal from 'react-modal'
 import NewExpense from './NewExpense'
-import { useState, useEffect, useMemo, useRef } from 'react'
+import { useState, useCallback, useContext } from 'react'
 import {FaSort, FaFilter} from 'react-icons/fa'
 import ModifyExpense from './ModifyExpense'
 import FiltersMenu from './FiltersMenu'
-import { useCallback } from 'react'
+import {Context} from '../hooks/Context'
 
 Modal.setAppElement('#root')
 function Expense() {
-    const [loading, setLoading] = useState(true)
+    const {expenseList, loading, addExpense, updateExpense, deleteExpense, modifyItem, setModifyItem} = useContext(Context)
+
     const [sortType, setSortType] = useState('')
-    const [expenseList, setExpenseList] = useState([])
     const [modalIsOpen, setModalIsOpen] = useState(false)
     const [modifyModalIsOpen, setModifyModalIsOpen] = useState(false)
-    const [modifyItem, setModifyItem] = useState(null)
     const [showFilters, setShowFilters] = useState(false)
     const [categoryFilter, setCategoryFilter] = useState([])
     const [costFilter, setCostFilter] = useState({
@@ -30,33 +29,19 @@ function Expense() {
         }
       ])
 
-      const getExpenses = async() => {
-        try{
-            setLoading(true)
-            const {data} = await axios.get('/api/expense/myExpenses')
-            function sortedData() {
-                if(sortType === 'oldToNew'){
-                    return data.sort((a, b) => a.date.localeCompare(b.date))
-                }if(sortType === 'newToOld'){
-                    return data.sort((a, b) => b.date.localeCompare(a.date))
-                }if(sortType === 'lowToHigh'){
-                    return data.sort((a, b) => a.cost - b.cost)
-                }if(sortType === 'highToLow'){
-                    return data.sort((a, b) => b.cost - a.cost)
-                }else{
-                    return data
-                }
-            }
-            setExpenseList(sortedData())
-            setLoading(false)
-        }catch(err){
-            console.log(err)
+    const sortedData = (data) => {
+        if(sortType === 'oldToNew'){
+            return data.sort((a, b) => a.date.localeCompare(b.date))
+        }if(sortType === 'newToOld'){
+            return data.sort((a, b) => b.date.localeCompare(a.date))
+        }if(sortType === 'lowToHigh'){
+            return data.sort((a, b) => a.cost - b.cost)
+        }if(sortType === 'highToLow'){
+            return data.sort((a, b) => b.cost - a.cost)
+        }else{
+            return data
         }
     }
-
-    useEffect(() => {
-        getExpenses()
-    }, [sortType])
 
     const timeZoneOffset = new Date().getTimezoneOffset() * 60
       
@@ -77,51 +62,9 @@ function Expense() {
         })
     }, [showFilters, loading])
 
-    console.log(filteredItems())
-
-    
-    const addExpense = async (e) => {
-        e.preventDefault()
-        const newExpense = {
-            description: e.target.description.value,
-            category: e.target.category.value,
-            date: e.target.date.value,
-            cost: e.target.cost.value
-        }
-        e.target.reset()
-        try{
-            await axios.post('/api/expense/', newExpense)
-            getExpenses()
-        }catch(err){
-            console.log(err)
-        }
-    }
-
-    const updateExpense = async (e) => {
-        e.preventDefault()
-        const updatedExpense = {
-            description: e.target.description.value,
-            category: e.target.category.value,
-            date: e.target.date.value,
-            cost: e.target.cost.value
-        }
-        try{
-            await axios.put(`/api/expense/${modifyItem._id}`, updatedExpense)
-            getExpenses()
-            setModifyModalIsOpen(false)
-        }catch(err){
-            console.log(err)
-        }
-    }
-    
-    const deleteExpense = async() => {
-        try{
-            await axios.delete(`/api/expense/${modifyItem._id}`)
-            getExpenses()
-            setModifyModalIsOpen(false)
-        }catch(err){
-            console.log(err)
-        }
+    const handleDelete = () => {
+        deleteExpense()
+        setModifyModalIsOpen(false)
     }
 
     const dateSort = () => {
@@ -149,7 +92,7 @@ function Expense() {
         return acc + obj.cost
     }, 0)
     
-    const expenseHtml = filteredItems().map(item => (
+    const expenseHtml = sortedData(filteredItems()).map(item => (
         <div key={item._id} onClick={() => openModifyExpense(item._id)} className='grid grid-cols-12 items-center py-4 px-2 text-sm md:text-base shadow max-w-full lg:mx-auto hover:shadow-md hover:bg-neutral-200 transition-all cursor-pointer'>
             <p className='col-span-4 first-letter:uppercase' >{item.description}</p>
             <p className='col-span-3 first-letter:uppercase'>{item.category}</p>
@@ -196,7 +139,7 @@ function Expense() {
                     setModifyModalIsOpen={setModifyModalIsOpen}
                     expenseList={expenseList}
                     updateExpense={updateExpense}
-                    deleteExpense={deleteExpense}
+                    handleDelete={handleDelete}
                     modifyItem={modifyItem} />
             </Modal>
         </div>

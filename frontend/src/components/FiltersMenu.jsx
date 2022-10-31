@@ -20,14 +20,23 @@ function FiltersMenu(props) {
         })
     }
 
-    function updateData(event) {
-        const {name, value} = event.target
+    function updateData(e) {
+        const {name, value} = e.target
         props.setCostFilter(prev => {
             return {
                 ...prev,
                 [name]: value
             }
         })
+    }
+
+    function closeForm(e) {
+        e.preventDefault()
+        props.toggleFilters()
+    }
+
+    const resetFilters = () => {
+        //make this work and add button for it
     }
     
     const categoryInputs = categories.map(item => (
@@ -41,7 +50,7 @@ function FiltersMenu(props) {
   return (
     <div className='w-full sm:w-2/4 lg:w-2/6 2xl:w-1/4 bg-red-500 h-[92vh] fixed top-[8vh] right-0 shadow-lg overflow-y-auto  p-2 border-t-2 border-gray-200'>
         <button onClick={() => props.toggleFilters()}>close</button>
-        <div className='overflow-visible'>
+        <form onSubmit={closeForm} className='overflow-visible'>
             {categoryInputs}
             <DateRange 
                 className='text-sm overflow-hidden'
@@ -51,8 +60,8 @@ function FiltersMenu(props) {
             />
             <input className='' onChange={updateData} value={props.costFilter.minAmount} type='number' name='minAmount' placeholder='Min Amount' pattern='^\d*(\.\d{1,2})?$' step='.01' />
             <input className='' onChange={updateData} value={props.costFilter.maxAmount} type='number' name='maxAmount' placeholder='Max Amount' pattern='^\d*(\.\d{1,2})?$' step='.01' />
-            <button onClick={() => props.toggleFilters()}>Apply Filters</button>
-        </div>
+            <button type='submit'>Apply Filters</button>
+        </form>
     </div>
   )
 }

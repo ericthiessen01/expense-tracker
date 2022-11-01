@@ -32,7 +32,7 @@ function FiltersMenu(props) {
 
     function closeForm(e) {
         e.preventDefault()
-        props.toggleFilters()
+        props.setShowFilters(prev => !prev)
     }
 
     const resetFilters = () => {
@@ -49,7 +49,7 @@ function FiltersMenu(props) {
 
   return (
     <div className='w-full sm:w-2/4 lg:w-2/6 2xl:w-1/4 bg-red-500 h-[92vh] fixed top-[8vh] right-0 shadow-lg overflow-y-auto  p-2 border-t-2 border-gray-200'>
-        <button onClick={() => props.toggleFilters()}>close</button>
+        <button onClick={() => props.setShowFilters(prev => !prev)}>close</button>
         <form onSubmit={closeForm} className='overflow-visible'>
             {categoryInputs}
             <DateRange 

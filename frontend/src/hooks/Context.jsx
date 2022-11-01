@@ -14,7 +14,6 @@ function ContextProvider({children}) {
             const {data} = await axios.get('/api/expense/myExpenses')
             setExpenseList(data)
             setLoading(false)
-            console.log('api call')
         }catch(err){
             console.log(err)
         }

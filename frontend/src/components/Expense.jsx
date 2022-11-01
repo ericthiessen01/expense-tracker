@@ -1,18 +1,18 @@
 import React from 'react'
-// import axios from 'axios'
 import Modal from 'react-modal'
-import NewExpense from './NewExpense'
 import { useState, useCallback, useContext } from 'react'
+import {Context} from '../hooks/Context'
 import {FaSort, FaFilter} from 'react-icons/fa'
+import NewExpense from './NewExpense'
 import ModifyExpense from './ModifyExpense'
 import FiltersMenu from './FiltersMenu'
-import {Context} from '../hooks/Context'
+import ExpenseItem from './ExpenseItem'
 
 Modal.setAppElement('#root')
 function Expense() {
     const {expenseList, loading, addExpense, updateExpense, deleteExpense, modifyItem, setModifyItem} = useContext(Context)
 
-    const [sortType, setSortType] = useState('')
+    const [sortType, setSortType] = useState('oldToNew')
     const [modalIsOpen, setModalIsOpen] = useState(false)
     const [modifyModalIsOpen, setModifyModalIsOpen] = useState(false)
     const [showFilters, setShowFilters] = useState(false)
@@ -43,6 +43,7 @@ function Expense() {
         }
     }
 
+    // expense.date is in GMT while filter.date is local time hence the mess below
     const timeZoneOffset = new Date().getTimezoneOffset() * 60
       
     const filteredItems = useCallback(() => {
@@ -84,42 +85,29 @@ function Expense() {
         setModifyModalIsOpen(true)
     }
 
-    const toggleFilters = () => {
-        setShowFilters(prev => !prev)
-    }
-
     const totalCost = filteredItems().reduce((acc, obj) => {
         return acc + obj.cost
     }, 0)
     
-    const expenseHtml = sortedData(filteredItems()).map(item => (
-        <div key={item._id} onClick={() => openModifyExpense(item._id)} className='grid grid-cols-12 items-center py-4 px-2 text-sm md:text-base shadow max-w-full lg:mx-auto hover:shadow-md hover:bg-neutral-200 transition-all cursor-pointer'>
-            <p className='col-span-4 first-letter:uppercase' >{item.description}</p>
-            <p className='col-span-3 first-letter:uppercase'>{item.category}</p>
-            <p className='col-span-3' >{new Date(item.date).toLocaleDateString(undefined, {
-                timeZone: 'UTC',
-                year: 'numeric',
-                month: 'numeric',
-                day: 'numeric'
-            })}</p>
-            <p className='col-span-2 text-right' >{item.cost.toLocaleString("en-US", {
-                style: "currency", 
-                currency: "USD", 
-            })}</p>
-        </div>
+    const expenseItems = sortedData(filteredItems()).map(item => (
+        <ExpenseItem 
+            key={item._id}
+            {...item}
+            openModifyExpense={openModifyExpense}
+        />
     ))
 
   return (
     <>
         <div className='w-full max-w-7xl bg-neutral-100 lg:mt-6 lg:rounded-md lg:p-4 lg:mx-auto'>
-            <p className='ml-auto w-fit' onClick={toggleFilters}><FaFilter /></p>
+            <p className='ml-auto w-fit' onClick={() => setShowFilters(prev => !prev)}><FaFilter /></p>
             <div className='grid grid-cols-12 items-center p-2 font-bold md:text-lg border-b-2 border-green-500'>
                 <p className='col-span-4' >Description</p>
                 <p className='col-span-3'>Category</p>
-                <p className='col-span-2 md:col-span-3 cursor-pointer' onClick={() => dateSort()} >Date<FaSort className='inline'/></p>
-                <p className='col-span-3 md:col-span-2 text-right overflow-visible cursor-pointer' onClick={() => amountSort()} >Amount<FaSort className='inline'/></p>
+                <p className='col-span-2 md:col-span-3 cursor-pointer' onClick={() => dateSort()} >Date <FaSort className='inline'/></p>
+                <p className='col-span-3 md:col-span-2 text-right overflow-visible cursor-pointer' onClick={() => amountSort()} >Amount <FaSort className='inline'/></p>
             </div>
-            {expenseHtml}
+            {expenseItems}
             <div className='grid grid-cols-12 items-center px-3 pt-6 font-bold md:text-xl'>
                 <p className='col-span-9'>Total:</p>
                 <p className='col-span-3 text-right overflow-visible'>{totalCost.toLocaleString("en-US", {
@@ -144,7 +132,7 @@ function Expense() {
             </Modal>
         </div>
         {showFilters && <FiltersMenu 
-            toggleFilters={toggleFilters}
+            setShowFilters={setShowFilters}
             expenseList={expenseList}
             costFilter={costFilter}
             setCostFilter={setCostFilter}

@@ -12,10 +12,15 @@ function ModifyExpense(props) {
         {value: item, label: capFirstLetter(item)}
     ))
 
+    const handleChange = (e) => {
+        props.updateExpense(e)
+        props.setModifyModalIsOpen(false)
+    }
+
   return (
     <div className='w-full max-w-7xl bg-neutral-200 lg:p-4 lg:mx-auto overflow-visible'>
         <button onClick={() => props.setModifyModalIsOpen(false)} className='text-red-600 bg-slate-50 rounded text-4xl text-right hover:shadow-md hover:text-rose-600 transition-all'><FaWindowClose /></button>
-        <form onSubmit={props.updateExpense} className='w-full overflow-visible'>
+        <form onSubmit={handleChange} className='w-full overflow-visible'>
             <div className='grid grid-cols-12 gap-2 my-4 p-2 text-sm md:text-base lg:mt-12 overflow-visible'>
                 <input className='col-span-4 border-2 border-slate-800 rounded-md py-1 px-1.5 ' type='text' name='description' defaultValue={capFirstLetter(props.modifyItem.description)} required />
                 <CreatableSelect options={categories} className='col-span-3 border-2 border-slate-800 rounded-md overflow-visible' name='category' defaultValue={{label: capFirstLetter(props.modifyItem.category), value: props.modifyItem.category}} required />

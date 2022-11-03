@@ -100,12 +100,12 @@ function Expense() {
   return (
     <>
         <div className='w-full max-w-7xl bg-neutral-100 lg:mt-6 lg:rounded-md lg:p-4 lg:mx-auto'>
-            <p className='ml-auto w-fit' onClick={() => setShowFilters(prev => !prev)}><FaFilter /></p>
+            <p className='ml-auto w-fit py-1 px-2 my-1 font-bold md:text-lg cursor-pointer hover:underline hover:text-green-600' onClick={() => setShowFilters(prev => !prev)}>Filters <FaFilter className='inline'/></p>
             <div className='grid grid-cols-12 items-center p-2 font-bold md:text-lg border-b-2 border-green-500'>
                 <p className='col-span-4' >Description</p>
                 <p className='col-span-3'>Category</p>
-                <p className='col-span-2 md:col-span-3 cursor-pointer' onClick={() => dateSort()} >Date <FaSort className='inline'/></p>
-                <p className='col-span-3 md:col-span-2 text-right overflow-visible cursor-pointer' onClick={() => amountSort()} >Amount <FaSort className='inline'/></p>
+                <p className='col-span-2 md:col-span-3 cursor-pointer hover:underline hover:text-green-600' onClick={() => dateSort()} >Date <FaSort className='inline'/></p>
+                <p className='col-span-3 md:col-span-2 text-right overflow-visible cursor-pointer hover:underline hover:text-green-600' onClick={() => amountSort()} >Amount <FaSort className='inline'/></p>
             </div>
             {expenseItems}
             <div className='grid grid-cols-12 items-center px-3 pt-6 font-bold md:text-xl'>
@@ -120,7 +120,8 @@ function Expense() {
                 <NewExpense 
                     addExpense={addExpense}
                     setModalIsOpen={setModalIsOpen}
-                    expenseList={expenseList} />
+                    expenseList={expenseList} 
+                />
             </Modal>
             <Modal isOpen={modifyModalIsOpen} onRequestClose={() => setModifyModalIsOpen(false)} className='max-w-6xl h-2/6 mx-auto mt-64 p-2 bg-neutral-200 rounded-lg overflow-visible'>
                 <ModifyExpense 
@@ -128,7 +129,8 @@ function Expense() {
                     expenseList={expenseList}
                     updateExpense={updateExpense}
                     handleDelete={handleDelete}
-                    modifyItem={modifyItem} />
+                    modifyItem={modifyItem} 
+                />
             </Modal>
         </div>
         {showFilters && <FiltersMenu 

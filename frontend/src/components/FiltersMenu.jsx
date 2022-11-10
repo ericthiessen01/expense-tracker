@@ -49,16 +49,13 @@ function FiltersMenu(props) {
               key: "selection"
             }
           ])
-        //make this work and add button for it
     }
     
     const categoryInputs = categories.map(item => (
-
             <label key={item.value}>
                 <input onChange={() => handleChange(item.value)} className='mr-2' type='checkbox' name='category' value={item.value} checked={props.categoryFilter.includes(item.value)} />
                 {item.label}
             </label>
-
     ))
 
   return (

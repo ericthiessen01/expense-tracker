@@ -43,7 +43,7 @@ function Expense() {
         }
     }
 
-    // expense.date is in GMT while filter.date is local time hence the mess below
+    // expense.date is in GMT while filter.date is local time hence the mess below. Need to find a better solution
     const timeZoneOffset = new Date().getTimezoneOffset() * 60
       
     const filteredItems = useCallback(() => {
